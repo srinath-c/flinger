@@ -9,32 +9,30 @@ import (
 
 func main() {
 	if len(os.Args) == 1 {
-		fmt.Println("Give a port to listen (with ':' prefix) and remote ip with port as arguments")
+		fmt.Println("Give a port to listen (with ':' prefix) as  arguments")
 		return
 	}
-	if len(os.Args) != 3 {
+	if len(os.Args) != 2 {
 		fmt.Println("Error not enough arguments")
 		return
 	}
 
 	listen, err := net.Listen("tcp", os.Args[1])
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Could not listen in the given port :", os.Args[1])
+		return
 	}
-	for {
-		out, err := net.Dial("tcp", os.Args[2])
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		in, err := listen.Accept()
-		if err != nil {
-			fmt.Println(err)
-		}
-		handleConn(in, out)
-		defer out.Close()
-		defer in.Close()
+	con1, err := listen.Accept()
+	if err != nil {
+		fmt.Println("Could not accept connection :", err)
+		return
 	}
+	con2, err := listen.Accept()
+	if err != nil {
+		fmt.Println("Could not accept connection :", err)
+		return
+	}
+	handleConn(con1, con2)
 
 }
 
