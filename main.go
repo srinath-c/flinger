@@ -22,7 +22,7 @@ func main() {
 		ext, err := net.DialTimeout("tcp", os.Args[1], 1*time.Second)
 		if err != nil {
 			fmt.Println("Could not connect to remote server : ", err)
-			time.Sleep(2 * time.Second)
+			time.Sleep(250 * time.Millisecond)
 			continue
 		}
 		fmt.Println("Connection to :", os.Args[1], " Successful")
