@@ -19,29 +19,24 @@ func main() {
 	}
 	ever := true
 	for ever {
-		ext, err := net.Dial("tcp", os.Args[1])
+		ext, err := net.DialTimeout("tcp", os.Args[1], 1*time.Second)
 		if err != nil {
 			fmt.Println("Could not connect to remote server : ", err)
 			time.Sleep(2 * time.Second)
 			continue
 		}
 		fmt.Println("Connection to :", os.Args[1], " Successful")
-		internal, err := net.Dial("tcp", os.Args[2])
+
+		internal, err := net.DialTimeout("tcp", os.Args[2], 1*time.Second)
 		if err != nil {
 			fmt.Println("Could not connect to remote server : ", err)
 			return
 		}
-		rtn := handleConn(ext, internal)
-		if rtn {
-			fmt.Println(rtn)
-			time.Sleep(1 * time.Second)
-			continue
-		}
+		handleConn(ext, internal)
 	}
 }
 
-func handleConn(in net.Conn, out net.Conn) bool {
+func handleConn(in net.Conn, out net.Conn) {
 	go io.Copy(out, in)
 	go io.Copy(in, out)
-	return true
 }
