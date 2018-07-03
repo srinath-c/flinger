@@ -23,12 +23,6 @@ func main() {
 		return
 	}
 	fmt.Println("Listening on port : ", os.Args[1])
-	portB, err := net.Listen("tcp", os.Args[2])
-	if err != nil {
-		fmt.Println("Could not listen in the given port :", os.Args[2])
-
-	}
-	fmt.Println("Listening on port : ", os.Args[2])
 	ever := true
 	for ever {
 		con1, err := portA.Accept()
@@ -37,6 +31,12 @@ func main() {
 			continue
 		}
 		fmt.Println("Con accepted on port : ", os.Args[1], "from :", con1.RemoteAddr())
+		portB, err := net.Listen("tcp", os.Args[2])
+		if err != nil {
+			fmt.Println("Could not listen in the given port :", os.Args[2])
+
+		}
+		fmt.Println("Listening on port : ", os.Args[2])
 		con2, err := portB.Accept()
 		if err != nil {
 			fmt.Println("Could not accept connection :", err)
@@ -44,7 +44,7 @@ func main() {
 		}
 		fmt.Println("Con accepted on port : ", os.Args[2], "from :", con2.RemoteAddr())
 		handleConn(con1, con2)
-		continue
+		portB.Close()
 	}
 }
 
