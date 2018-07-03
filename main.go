@@ -16,18 +16,22 @@ func main() {
 		fmt.Println("Error not enough arguments")
 		return
 	}
-
-	ext, err := net.Dial("tcp", os.Args[1])
-	if err != nil {
-		fmt.Println("Could not connect to remote server : ", err)
-		return
+	ever := true
+	for ever {
+		ext, err := net.Dial("tcp", os.Args[1])
+		if err != nil {
+			fmt.Println("Could not connect to remote server : ", err)
+			continue
+		}
+		fmt.Println("Connection to :", os.Args[1], " Successful")
+		internal, err := net.Dial("tcp", os.Args[2])
+		if err != nil {
+			fmt.Println("Could not connect to remote server : ", err)
+			return
+		}
+		handleConn(ext, internal)
+		continue
 	}
-	internal, err := net.Dial("tcp", os.Args[2])
-	if err != nil {
-		fmt.Println("Could not connect to remote server : ", err)
-		return
-	}
-	handleConn(ext, internal)
 }
 
 func handleConn(in net.Conn, out net.Conn) {
