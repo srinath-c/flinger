@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"time"
 )
 
 func main() {
@@ -21,6 +22,7 @@ func main() {
 		ext, err := net.Dial("tcp", os.Args[1])
 		if err != nil {
 			fmt.Println("Could not connect to remote server : ", err)
+			time.Sleep(2 * time.Second)
 			continue
 		}
 		fmt.Println("Connection to :", os.Args[1], " Successful")
@@ -29,12 +31,17 @@ func main() {
 			fmt.Println("Could not connect to remote server : ", err)
 			return
 		}
-		handleConn(ext, internal)
-		continue
+		rtn := handleConn(ext, internal)
+		if rtn {
+			fmt.Println(rtn)
+			time.Sleep(1 * time.Second)
+			continue
+		}
 	}
 }
 
-func handleConn(in net.Conn, out net.Conn) {
+func handleConn(in net.Conn, out net.Conn) bool {
 	go io.Copy(out, in)
-	io.Copy(in, out)
+	go io.Copy(in, out)
+	return true
 }
